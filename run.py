@@ -36,7 +36,7 @@ def rate_limited_record_ip():
     # check for rate limit
     if limit_counter == 3:
         limit_counter = 0
-        return '429 error', 429
+        return '429 Too Many Requests', 429
 
     return record_ip()
 
