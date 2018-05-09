@@ -3,6 +3,14 @@ import logging
 
 app = Flask(__name__)
 
+logger = logging.getLogger('record-ip-flask')
+logger.setLevel(logging.DEBUG)
+fh = logging.FileHandler('debug.log')
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+fh.setLevel(logging.DEBUG)
+logger.addHandler(fh)
+
 # counter to rate limit every N calls
 limit_counter = 0
 
@@ -11,10 +19,12 @@ limit_counter = 0
 def record_ip():
     r = request
 
-    app.logger.error("""ip: {}, 
+    global logger
+    logger.info("""ip: {}, 
 url: {}, 
 headers:{}, 
-data:{}""".format(r.environ['REMOTE_ADDR'], r.url, r.headers, r.data))
+data:{}
++++++++++++++++++++++++++++++""".format(r.environ['REMOTE_ADDR'], r.url, r.headers, r.data))
 
     return jsonify({'ip': request.environ['REMOTE_ADDR']}), 200
 
@@ -32,9 +42,4 @@ def rate_limited_record_ip():
 
 
 if __name__ == '__main__':
-    handler = logging.FileHandler('debug.log')
-    handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-    handler.setLevel(logging.ERROR)
-    app.logger.addHandler(handler)
-    app.logger.setLevel(logging.INFO)
     app.run()
