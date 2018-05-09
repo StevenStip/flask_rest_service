@@ -39,7 +39,11 @@ def rate_limited_record_ip():
         logger.warning("""rate limited : with a limit of {} ip: {}, url: {}, 
         +++++++++++++++++++++++++++++""".format(limit_counter, r.environ['REMOTE_ADDR'], r.url, r.headers, r.data))
         limit_counter = 0
-        return '429 Too Many Requests', 429
+        resp = app.make_response("You're being rate limited")
+        resp.status_code = 503
+        resp.headers['Retry-After'] = 5
+
+        return resp
 
 
     return record_ip()
