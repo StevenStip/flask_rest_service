@@ -35,8 +35,11 @@ def rate_limited_record_ip():
     limit_counter += 1
     # check for rate limit
     if limit_counter == 3:
+        logger.warning("""rate limited : with a limit of {} ip: {}, url: {}, 
+        +++++++++++++++++++++++++++++""".format(limit_counter, r.environ['REMOTE_ADDR'], r.url, r.headers, r.data))
         limit_counter = 0
         return '429 Too Many Requests', 429
+
 
     return record_ip()
 
